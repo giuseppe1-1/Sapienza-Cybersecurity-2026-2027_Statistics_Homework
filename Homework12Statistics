@@ -1,1 +1,1003 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Homeworks - Giuseppe Signorelli</title>
+<style>
+  :root { --main: #3b9de0; --main-dark: #2680c4; --soft: #eaf4fc; --soft2: #d7ebfa; --line: #d3e6f4; --ink: #17303f; --muted: #5c7587; }
+  * { box-sizing: border-box; }
+  body {
+    font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: var(--ink);
+    background: #f2f8fd;
+    margin: 0;
+    padding: 28px 14px 70px;
+    line-height: 1.55;
+  }
+  .sheet { max-width: 960px; margin: 0 auto; }
+  header {
+    background: linear-gradient(135deg, #7cc0ee 0%, #4aa6e6 100%);
+    color: #fff;
+    border-radius: 18px;
+    padding: 26px 30px;
+    margin-bottom: 18px;
+  }
+  header h1 { margin: 0 0 4px; font-size: 1.75rem; font-weight: 700; letter-spacing: -.01em; }
+  header .sub { margin: 0; color: #eaf6ff; }
+  .content { display: block; }
+  section.card {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 22px 26px 26px;
+    margin-bottom: 18px;
+    box-shadow: 0 2px 10px rgba(60, 130, 190, .07);
+  }
+  h2 { font-size: 1.15rem; margin: 0 0 14px; color: var(--ink); display: flex; align-items: center; gap: 10px; }
+  h2 .num { display: inline-flex; width: 28px; height: 28px; border-radius: 9px; background: var(--main); color: #fff; font-size: .9rem; align-items: center; justify-content: center; }
+  .sub { color: var(--muted); }
+  code, input, select, textarea, td.m, .mono { font-family: "JetBrains Mono", Consolas, "Courier New", monospace; }
 
+  label { display: block; margin: 14px 0 5px; font-size: .82rem; font-weight: 600; color: var(--muted); }
+  label.chk { display: flex; align-items: center; gap: 8px; font-weight: 400; margin: 10px 0 0; }
+  input, select, textarea {
+    width: 100%;
+    font-size: 14px;
+    border: 1px solid #c4def0;
+    border-radius: 10px;
+    padding: 8px 11px;
+    background: #fff;
+    color: var(--ink);
+  }
+  input[type=checkbox] { width: auto; accent-color: var(--main); }
+  input:focus, select:focus, textarea:focus { outline: 3px solid rgba(59, 157, 224, .25); border-color: var(--main); }
+  textarea { height: 200px; resize: vertical; background: #f7fbfe; }
+  #out { background: var(--soft); font-weight: 700; color: var(--main-dark); }
+  button {
+    font: 600 13.5px "Inter", system-ui, Arial, sans-serif;
+    padding: 8px 16px;
+    border: 1px solid var(--main);
+    border-radius: 999px;
+    background: var(--main);
+    color: #fff;
+    cursor: pointer;
+    margin: 10px 6px 0 0;
+    transition: background .15s;
+  }
+  button:hover { background: var(--main-dark); }
+  button.ghost { background: #fff; color: var(--main-dark); border-color: #b9d9f0; }
+  button.ghost:hover { background: var(--soft); }
+  
+  .nav-btn { font-size: 1.1rem; padding: 12px 24px; margin: 10px; }
+
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+  @media (max-width: 780px) { .cols { grid-template-columns: 1fr; } }
+
+  .ctl { margin-top: 6px; font-size: 13px; color: var(--muted); display: flex; flex-wrap: wrap; align-items: center; gap: 2px; }
+  .ctl select { width: auto; padding: 6px 10px; border-radius: 999px; margin-left: 6px; }
+  input[type=range] { padding: 0; border: none; margin-top: 12px; accent-color: var(--main); }
+  #plot { border: 1px solid var(--line); border-radius: 14px; background: #fff; }
+  #stepinfo { font-size: 13px; line-height: 1.5; min-height: 6em; margin-top: 12px; padding: 11px 14px; background: var(--soft); border-radius: 12px; }
+  #hoverinfo { font-family: "JetBrains Mono", Consolas, monospace; font-size: 12px; color: var(--muted); min-height: 1.4em; margin-top: 8px; }
+  .legend { font-size: 12px; color: var(--muted); margin-top: 8px; display: flex; flex-wrap: wrap; gap: 6px; }
+  .legend span { background: var(--soft); border-radius: 999px; padding: 3px 10px; white-space: nowrap; }
+
+  table { border-collapse: separate; border-spacing: 0; }
+  table.seq { width: 100%; border-spacing: 3px; font-size: 12.5px; margin: 6px 0 0 -3px; }
+  table.seq td, table.seq th { border-radius: 7px; padding: 5px 3px; text-align: center; }
+  table.seq th { background: var(--soft); font-weight: 600; color: var(--muted); }
+  table.seq td { cursor: pointer; background: #f7fbfe; border: 1px solid var(--line); font-family: "JetBrains Mono", Consolas, monospace; transition: background .12s; }
+  table.seq td:hover { background: var(--soft2); }
+  table.seq td.on { background: var(--main); border-color: var(--main); color: #fff; font-weight: 700; }
+  table.res, table.cmp { width: 100%; font-size: .92rem; }
+  table.res td, table.res th, table.cmp td, table.cmp th { padding: 9px 12px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--line); }
+  table.res th, table.cmp th { background: var(--soft); color: var(--muted); font-size: .76rem; text-transform: uppercase; letter-spacing: .05em; border-bottom: none; }
+  table.res th:first-child, table.cmp th:first-child { border-radius: 10px 0 0 10px; }
+  table.res th:last-child, table.cmp th:last-child { border-radius: 0 10px 10px 0; }
+  table.cmp td:first-child { font-weight: 600; }
+  table.res td.m { color: var(--main-dark); font-weight: 700; white-space: nowrap; }
+
+  .figs { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; margin-top: 22px; }
+  figure { margin: 0; border: 1px solid var(--line); border-radius: 14px; padding: 12px 12px 10px; background: #fff; }
+  figcaption { font-size: .8rem; color: var(--muted); margin-top: 4px; }
+  #statmsg { color: #c0392b; font-size: .9rem; min-height: 1.2em; }
+  p.note { color: var(--muted); font-size: .92rem; margin: 14px 0 0; }
+
+  .hw-text ul { padding-left: 20px; }
+  .hw-text li { margin-bottom: 12px; }
+  .hw-text h3 { font-size: 1.05rem; margin: 20px 0 8px; color: var(--main-dark); }
+  code { background-color: var(--soft); padding: 2px 6px; border-radius: 4px; color: var(--main-dark); font-size: 0.9em; }
+  
+  .pipeline { background: #f7fbfe; padding: 20px; border-radius: 12px; border: 1px solid var(--line); font-family: "JetBrains Mono", Consolas, monospace; text-align: center; margin-bottom: 20px; }
+  .pipeline-step { font-weight: bold; font-size: 1.1rem; margin: 8px 0; color: var(--main-dark); }
+  .arrow { color: var(--muted); font-size: 0.9rem; margin: 4px 0; }
+</style>
+<script>
+  let hw1Initialized = false;
+
+  function showPage(pageId) {
+    document.getElementById('home_page').style.display = 'none';
+    document.getElementById('hw1_page').style.display = 'none';
+    document.getElementById('hw2_page').style.display = 'none';
+    
+    document.getElementById(pageId).style.display = 'block';
+
+    // Inizializza il grafico dell'Homework 1 SOLO quando viene mostrato per la prima volta
+    if (pageId === 'hw1_page' && !hw1Initialized) {
+      esegui("faster");
+      hw1Initialized = true;
+    }
+  }
+</script>
+</head>
+<body>
+
+<!-- HOME PAGE -->
+<div id="home_page" class="sheet">
+  <header style="text-align: center; padding: 60px 30px;">
+    <h1 style="font-size: 2.5rem;">Giuseppe Signorelli</h1>
+    <p class="sub" style="font-size: 1.3rem; margin-top: 10px;">ID: 2327983</p>
+  </header>
+  <div class="content">
+    <section class="card" style="text-align: center; padding: 50px 20px;">
+      <h2 style="justify-content: center; font-size: 1.6rem; margin-bottom: 20px;">Select the homework</h2>
+      
+      
+      <button class="nav-btn" onclick="showPage('hw1_page')">Homework 1 (ECC)</button>
+      <button class="nav-btn" onclick="showPage('hw2_page')">Homework 2 (Ethereum)</button>
+    </section>
+  </div>
+</div>
+
+
+<!-- ============================================== -->
+<!-- HOMEWORK 1: TOY ECC                            -->
+<!-- ============================================== -->
+<div id="hw1_page" class="sheet" style="display: none;">
+  <button class="ghost" onclick="showPage('home_page')" style="margin-bottom: 15px;">&laquo; Torna alla Home</button>
+  <header>
+    <h1>Public key from a private key (toy ECC)</h1>
+    <p class="sub">Curve y² = x³ + 7 (mod 17), base point G = (1, 5), public key Q = kG.</p>
+  </header>
+  <div class="content">
+
+  <section class="card">
+  <h2><span class="num">1</span>Computing the public key</h2>
+
+  <div class="cols">
+    <div>
+      <label for="k">Private key k</label>
+      <input type="number" id="k" value="50" min="1" oninput="esegui(modoCorrente)">
+
+      <button onclick="esegui('classico')">Classic method</button>
+      <button onclick="esegui('faster')">Faster method</button>
+
+      <label for="out">Public key Q</label>
+      <input type="text" id="out" readonly>
+
+      <label for="storico">History of operations</label>
+      <textarea id="storico" readonly></textarea>
+    </div>
+
+    <div>
+      <label>Point addition on the curve over F<sub>17</sub>, stage by stage</label>
+      <svg id="plot" viewBox="0 0 400 400" width="100%" style="display:block"></svg>
+      <div class="ctl">
+        <button class="ghost" onclick="fermaAnim(); vaiA(anim.i - 1)">&laquo; Prev</button>
+        <button id="btnPlay" onclick="togglePlay()">Pause</button>
+        <button class="ghost" onclick="fermaAnim(); vaiA(anim.i + 1)">Next &raquo;</button>
+        speed
+        <select id="speed" onchange="cambiaVelocita()">
+          <option value="1400">slow</option>
+          <option value="700" selected>normal</option>
+          <option value="250">fast</option>
+          <option value="60">very fast</option>
+        </select>
+      </div>
+      <input type="range" id="stepRange" min="0" max="0" value="0" step="1" oninput="fermaAnim(); vaiA(+this.value)">
+      <label class="chk"><input type="checkbox" id="fullLine" onchange="disegnaPasso()"> also show the rest of the wrapped line (faint)</label>
+      <div id="stepinfo"></div>
+      <div class="legend">
+        <span style="color:#e8780a">&#9711; A, B: the two points to add</span>
+        <span style="color:#222">&#8212; line through them</span>
+        <span style="color:#d62728">&#9711; T: third point of the line on the curve</span>
+        <span style="color:#d62728">&#9679; R: result (same x as T, opposite y)</span>
+        <span style="color:#2f8fd0">&#9679; results already obtained</span>
+      </div>
+      <div id="hoverinfo">Hover a point to see which multiple of G it is. Click it to set k.</div>
+    </div>
+  </div>
+
+  <p class="sub" style="margin:22px 0 0">How Q changes with k (click a cell to use that k; cells with the same k mod the order are shaded):</p>
+  <div id="seqbox"></div>
+  </section>
+
+  <section class="card">
+  <h2><span class="num">2</span>Statistical exploration</h2>
+
+  <div class="cols">
+    <div>
+      <label for="statN">N (number of values of k, from 1 to N)</label>
+      <input type="number" id="statN" value="200" min="2" max="5000">
+    </div>
+    <div>
+      <label for="statP">Base point</label>
+      <select id="statP"></select>
+    </div>
+  </div>
+  <button onclick="eseguiStatistiche()">Calculate statistics</button>
+  <div id="statmsg"></div>
+
+  <div id="results" style="display:none">
+    <table class="res" id="restab"></table>
+
+    <div class="figs">
+      <figure><svg id="cx" viewBox="0 0 340 170" width="100%"></svg><figcaption>Fig. 1 &ndash; Frequency of each x value. Dashed line: uniform expectation over the 17 values.</figcaption></figure>
+      <figure><svg id="cy" viewBox="0 0 340 170" width="100%"></svg><figcaption>Fig. 2 &ndash; Frequency of each y value.</figcaption></figure>
+      <figure><svg id="cp" viewBox="0 0 340 170" width="100%"></svg><figcaption>Fig. 3 &ndash; Frequency of each distinct point.</figcaption></figure>
+      <figure><svg id="cb" viewBox="0 0 340 170" width="100%"></svg><figcaption>Fig. 4 &ndash; P(bit = 1) for the 5 bits of x (x0&ndash;x4) and of y (y0&ndash;y4). Dashed line: 0.5.</figcaption></figure>
+      <figure><svg id="cs" viewBox="0 0 340 170" width="100%"></svg><figcaption>Fig. 5 &ndash; x (blue) and y (red) of kG for the first values of k.</figcaption></figure>
+      <figure><svg id="ca" viewBox="0 0 340 170" width="100%"></svg><figcaption>Fig. 6 &ndash; Avalanche: bits changed (out of 10) when one bit of k is flipped. Black ticks: binomial(10, 1/2).</figcaption></figure>
+    </div>
+  </div>
+  </section>
+
+  <section class="card">
+  <h2><span class="num">3</span>Which properties matter?</h2>
+
+  <table class="cmp">
+    <tr><th>Property</th><th>Cryptographic hash</th><th>One-way function Q = kG</th></tr>
+    <tr><td>Hard to invert</td><td>Required (preimage resistance).</td><td>Required; it is the definition. For ECC it relies on the ECDLP.</td></tr>
+    <tr><td>Uniform-looking output</td><td>Expected.</td><td>Not needed. The outputs only have to be hard to invert; here they all lie in a small subgroup.</td></tr>
+    <tr><td>Avalanche effect</td><td>Required.</td><td>Not required. kG and (k+1)G differ by exactly G.</td></tr>
+    <tr><td>No input/output correlation</td><td>Expected.</td><td>Weak requirement. A small linear correlation says nothing about how hard the inversion is.</td></tr>
+    <tr><td>Collision resistance</td><td>Required.</td><td>No: k and k + order give the same Q. Within one period the map is injective.</td></tr>
+    <tr><td>Arbitrary-length input</td><td>Yes.</td><td>No: the input is a scalar and the operation is algebraic.</td></tr>
+  </table>
+  <p class="note">In this toy example G has order 9, so Q can be inverted with at most 9 attempts. On secp256k1 the group order is about 2<sup>256</sup>; that size, not the statistics above, is what makes it secure.</p>
+  </section>
+
+  </div>
+</div>
+
+
+<!-- ============================================== -->
+<!-- HOMEWORK 2: ETHEREUM PIPELINE                  -->
+<!-- ============================================== -->
+<div id="hw2_page" class="sheet" style="display: none;">
+  <button class="ghost" onclick="showPage('home_page')" style="margin-bottom: 15px;">&laquo; Torna alla Home</button>
+  <header>
+    <h1>HMWK 2 &mdash; From Wallet Seed to Ethereum Address</h1>
+    <p class="sub">Hashing, Key Derivation and Cryptographic Primitives</p>
+  </header>
+  
+  <div class="content hw-text">
+    <section class="card">
+      <h2><span class="num">1</span>The Cryptographic Pipeline Overview</h2>
+      <p>
+        Un wallet moderno (come MetaMask, Rabby o Exodus) non genera semplicemente chiavi a caso, ma utilizza una rigorosa e deterministica pipeline crittografica per trasformare una sequenza mnemonica di parole in un indirizzo esadecimale Ethereum completo di checksum.
+      </p>
+      <div class="pipeline">
+        <div class="pipeline-step">Mnemonic Phrase (es. 12-24 words)</div>
+        <div class="arrow">↓ BIP-39 (PBKDF2 + HMAC-SHA512) ↓</div>
+        <div class="pipeline-step">Root Seed (512-bit)</div>
+        <div class="arrow">↓ BIP-32 / BIP-44 (HD Key Derivation) ↓</div>
+        <div class="pipeline-step">Private Key (256-bit)</div>
+        <div class="arrow">↓ secp256k1 (Elliptic Curve Multiplication) ↓</div>
+        <div class="pipeline-step">Public Key (Uncompressed 64-byte)</div>
+        <div class="arrow">↓ Keccak-256 (Hashing) ↓</div>
+        <div class="pipeline-step">Raw Ethereum Address (20-byte)</div>
+        <div class="arrow">↓ EIP-55 (Mixed-case Encoding) ↓</div>
+        <div class="pipeline-step">Checksummed Address (0x...)</div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2><span class="num">2</span>In-Depth Analysis of Pipeline Nodes</h2>
+      <p>Di seguito un'analisi profonda di ogni singolo standard e primitiva matematica che compone il viaggio dall'entropia iniziale all'indirizzo pubblico.</p>
+      
+      <h3>BIP-39: Generazione Mnemonic e Seed</h3>
+      <ul>
+        <li><strong>Entropia Iniziale:</strong> Il processo inizia generando da 128 a 256 bit di pura casualità. A questa entropia viene appeso un piccolo checksum (derivato da SHA-256).</li>
+        <li><strong>Mnemonic Sentence:</strong> La sequenza di bit risultante viene frammentata in gruppi da 11 bit. Ogni gruppo agisce come indice (da 0 a 2047) per mappare una specifica parola all'interno della wordlist standard di BIP-39. Questo permette agli umani di scrivere e ricordare facilmente il proprio backup.</li>
+        <li><strong>Key Stretching (PBKDF2):</strong> Per convertire le parole in un seme utilizzabile (e per difendersi da attacchi di forza bruta), la mnemonic phrase viene concatenata con un salt opzionale (di default la stringa <code>"mnemonic"</code>) e passata attraverso la funzione <strong>PBKDF2</strong> usando HMAC-SHA512 per <strong>2048 iterazioni</strong>. Il risultato è il Root Seed a 512 bit.</li>
+      </ul>
+
+      <h3>BIP-32: Hierarchical Deterministic (HD) Key Derivation</h3>
+      <ul>
+        <li>Il Root Seed a 512 bit viene diviso a metà: i primi 256 bit diventano la <strong>Master Private Key</strong>, i secondi 256 bit diventano il <strong>Master Chain Code</strong> (che serve come entropia aggiuntiva).</li>
+        <li>BIP-32 definisce la matematica per generare un "albero" infinito di chiavi figlie partendo da questo singolo nodo padre, permettendo di generare miliardi di indirizzi validi da un'unica frase mnemonica iniziale, evitando la necessità di fare backup di ogni nuova chiave generata.</li>
+      </ul>
+
+      <h3>BIP-44: Standard Derivation Paths</h3>
+      <ul>
+        <li>Mentre BIP-32 definisce <em>come</em> derivare le chiavi, BIP-44 definisce <em>dove</em> derivarle, creando un albero logico formattato come: <code>m / purpose' / coin_type' / account' / change / address_index</code>.</li>
+        <li>Ad esempio, per Ethereum il percorso standard è <code>m/44'/60'/0'/0/x</code>. Il numero <strong>60'</strong> è il codice assegnato alla rete Ethereum. Cambiando solo l'ultimo parametro (l'indice), il wallet genera infiniti indirizzi consecutivi per l'utente.</li>
+      </ul>
+
+      <h3>secp256k1: Crittografia a Curva Ellittica</h3>
+      <ul>
+        <li>Una volta ottenuta la Private Key (un enorme numero intero a 256 bit), questa viene moltiplicata per il <strong>Generator Point (G)</strong> sulla curva ellittica standardizzata secp256k1. L'operazione è monodirezionale (grazie al problema del logaritmo discreto ECDLP).</li>
+        <li>L'output è una coordinata (X, Y) sulla curva, che rappresenta la <strong>Public Key</strong>. Mentre in Bitcoin si usa spesso il formato compresso, Ethereum utilizza la chiave pubblica <strong>non compressa</strong> a 64 byte (rimuovendo il prefisso standard <code>0x04</code>).</li>
+      </ul>
+
+      <h3>Keccak-256: Hashing</h3>
+      <ul>
+        <li>La chiave pubblica di 64 byte viene data in pasto alla funzione di hash <strong>Keccak-256</strong>. Keccak utilizza una complessa "sponge construction" (absorb and squeeze) per mescolare i dati in modo irreversibile.</li>
+        <li>L'output del Keccak è una stringa a 32 byte (256 bit). Ethereum prende unicamente gli <strong>ultimi 20 byte</strong> (che corrispondono a 40 caratteri esadecimali) di questo hash. Questo troncamento diventerà l'indirizzo grezzo Ethereum.</li>
+      </ul>
+
+      <h3>EIP-55: Mixed-case Checksum Encoding</h3>
+      <ul>
+        <li>Poiché gli indirizzi grezzi esadecimali non hanno meccanismi di sicurezza intrinseci, un singolo carattere digitato male comporterebbe la perdita irreparabile di fondi. Vitalik Buterin ha introdotto <strong>EIP-55</strong> per risolvere il problema senza modificare il protocollo di base.</li>
+        <li><strong>Come funziona:</strong> L'indirizzo grezzo (in lowercase) viene hashato nuovamente con Keccak-256. L'algoritmo controlla ogni singolo carattere esadecimale dell'indirizzo: se è una lettera (a-f), verifica il nibble (mezzo byte) corrispondente nell'hash appena calcolato. Se il nibble è <code>>= 8</code>, la lettera dell'indirizzo viene <strong>convertita in maiuscolo</strong>. Questo crea un pattern di capitalizzazione univoco. Se un utente sbaglia a digitare, l'hash cambia drasticamente e il pattern maiuscolo/minuscolo non coincide più, permettendo al software (es. MetaMask) di bloccare la transazione.</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2><span class="num">3</span>Distinzioni Cruciali e Scopo dei Primitivi</h2>
+      <table class="cmp">
+        <tr><th>Concept</th><th>Definition & Role</th></tr>
+        <tr><td><strong>Key Generation & Derivation</strong></td><td>La <em>generazione</em> è la creazione dell'entropia iniziale (BIP-39). La <em>derivazione</em> (BIP-32/44) è la logica matematica usata per gestire sistematicamente un'infinità di chiavi a partire da quel seed senza dover salvare nient'altro.</td></tr>
+        <tr><td><strong>Public-Key Cryptography</strong></td><td>Garantisce la proprietà. Sfruttando la matematica delle curve (secp256k1), permette a un utente di firmare transazioni (dimostrando di possedere la Private Key) senza rivelare al network nient'altro che la Public Key.</td></tr>
+        <tr><td><strong>Hashing</strong></td><td>L'hashing (Keccak-256) garantisce determinismo a senso unico. Nasconde parzialmente la Public Key finché non avviene una transazione e riduce i 64 byte a un formato standard a 20 byte più facile da processare.</td></tr>
+        <tr><td><strong>Checksums & Encoding</strong></td><td>(EIP-55). Regole di formattazione che agiscono esclusivamente a livello di interfaccia software. Prevengono gli errori umani (typos) senza alterare le fondamenta crittografiche del protocollo Ethereum.</td></tr>
+      </table>
+    </section>
+
+    <section class="card">
+      <h2><span class="num">4</span>Contesto Storico (Temporal Context)</h2>
+      <p>Queste tecnologie non sono nate contemporaneamente; sono il risultato di decenni di evoluzione nella teoria dell'informazione e nella sicurezza informatica:</p>
+      <ul>
+        <li><strong>1977 - RSA:</strong> Rivest, Shamir e Adleman introducono la crittografia a chiave pubblica asimmetrica, gettando le basi concettuali per sistemi come Bitcoin ed Ethereum.</li>
+        <li><strong>2001 - SHA-2 / SHA-512:</strong> Standardizzato dal NIST. Molto solido, viene infatti utilizzato in BIP-39 all'interno del processo PBKDF2 per espandere la stringa mnemonica nel seed.</li>
+        <li><strong>2012 - BIP-32:</strong> Introdotto per risolvere il grave problema dei primi wallet Bitcoin che richiedevano continui backup ogni volta che veniva generata una nuova chiave (JBOK - Just a Bunch Of Keys). Nascono i wallet deterministici.</li>
+        <li><strong>2013 - BIP-39:</strong> Un salto di qualità per l'Usability. Sostituisce stringhe esadecimali impossibili da ricordare con semplici elenchi di parole inglesi.</li>
+        <li><strong>2014 - BIP-44:</strong> Amplia BIP-32 per supportare nativamente account multipli e, soprattutto, <em>coin multipli</em> (Bitcoin, Ethereum, Litecoin) da un'unica frase mnemonica, standardizzando la logica dell'albero di derivazione.</li>
+        <li><strong>2015 - SHA-3 vs Keccak:</strong> Una distinzione storica fondamentale. Keccak vinse il concorso del NIST per definire lo standard SHA-3. Tuttavia, poco prima della finalizzazione, il NIST alterò i parametri di <em>padding</em> (passando da <code>0x01</code> a <code>0x06</code>). Ethereum, che era già in fase avanzata di sviluppo, decise di <strong>mantenere il Keccak originale</strong>. Ecco perché "Keccak-256" ed "SHA3-256" producono hash diversi oggi.</li>
+        <li><strong>2016 - EIP-55:</strong> Un hack elegante introdotto dopo la nascita di Ethereum per risolvere la frustrazione (e le perdite economiche) dovute a errori di battitura sugli indirizzi.</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2><span class="num">5</span>Perché usare algoritmi multipli e non uno solo?</h2>
+      <p>
+        Invece di avere un super-algoritmo che fa tutto, la pipeline è segmentata perché ogni step risolve una minaccia o necessità specifica che un altro algoritmo non saprebbe gestire in modo efficiente:
+      </p>
+      <ul>
+        <li><strong>BIP-39 / BIP-32 / BIP-44:</strong> Risolvono il problema della <em>gestione e dell'usabilità umana</em>. Nessuna curva ellittica da sola può strutturare i backup sotto forma di parole facilmente memorizzabili.</li>
+        <li><strong>secp256k1:</strong> Risolve il problema dell'<em>autenticazione asimmetrica</em>. Una funzione di Hash non permette di creare Firme Digitali, mentre la curva ellittica è stata scelta appositamente per permettere validazioni rapide e firme molto compatte.</li>
+        <li><strong>Keccak-256:</strong> Risolve i problemi di <em>privacy e standardizzazione della lunghezza</em>. Derivare l'indirizzo dall'hash della chiave pubblica (invece di usare direttamente la chiave pubblica) aggiunge un layer di resistenza quantistica (finché non viene esposta per la prima volta).</li>
+        <li><strong>EIP-55:</strong> Risolve il problema degli <em>errori dell'interfaccia utente</em> (UI/UX). Gli algoritmi crittografici lavorano con bit invisibili; l'EIP-55 converte i metadati dell'hash in un formato visivo (maiuscolo/minuscolo) per difendere l'utente dalla sua stessa fallibilità.</li>
+      </ul>
+    </section>
+  </div>
+</div>
+
+<!-- ============================================== -->
+<!-- JAVASCRIPT LOGIC (Homework 1)                  -->
+<!-- ============================================== -->
+<script>
+const modulo = 17;
+const G = [1, 5];
+let modoCorrente = "faster";
+
+function log(testo) {
+    const s = document.getElementById("storico");
+    s.value += testo + "\n";
+}
+
+function esegui(metodo) {
+    const k = parseInt(document.getElementById("k").value);
+    const out = document.getElementById("out");
+    document.getElementById("storico").value = "";
+    modoCorrente = metodo;
+
+    if (!k || k < 1) {
+        out.value = "";
+        log("Enter a valid k (integer >= 1)");
+        initAnim(0, metodo);
+        return;
+    }
+
+    log("Base point: (" + G + ")");
+    let risultato;
+
+    if (metodo === "classico") {
+        log("--- Classic method ---");
+        let punti = [[1, 5]];
+        for (let i = 0; i < k - 1; i++) {
+            punti.push(calcolapunto(punti[0], punti[i]));
+        }
+        for (let i = 0; i < punti.length; i++) {
+            log("G" + (i + 1) + ": [" + punti[i] + "]");
+        }
+        risultato = punti[k - 1];
+    } else {
+        log("--- Faster method ---");
+        risultato = afastermethodforcalculateklarger(k, G);
+    }
+
+    out.value = risultato ? "(" + risultato[0] + ", " + risultato[1] + ")" : "point at infinity";
+    initAnim(k, metodo);
+}
+
+function calcolapunto(punto1, punto2) {
+    let m;
+    if (punto1 == null) return punto2;
+    if (punto2 == null) return punto1;
+
+    if (punto1[0] == punto2[0] && punto1[1] != punto2[1]) {
+        return null; 
+    }
+    if (punto1[0] === punto2[0] && punto1[1] === punto2[1]) {
+        let numeratore = (3 * (punto1[0] ** 2)) % modulo;
+        let denominatore = (2 * punto1[1]) % modulo;
+        let inverso = inversoMoltiplicativo(denominatore, modulo);
+        m = (numeratore * inverso) % modulo;
+    } else {
+        let numeratore = (punto2[1] - punto1[1]);
+        let denominatore = (punto2[0] - punto1[0]);
+        let inverso = inversoMoltiplicativo(denominatore, modulo);
+        m = (numeratore * inverso) % modulo;
+    }
+
+    let x3_temp = (m ** 2 - punto1[0] - punto2[0]) % modulo;
+    let x3 = (x3_temp + modulo) % modulo;
+
+    let y3_temp = (m * (punto1[0] - x3) - punto1[1]) % modulo;
+    let y3 = (y3_temp + modulo) % modulo;
+
+    return [x3, y3];
+}
+
+function inversoMoltiplicativo(numero, modulo) {
+    numero = ((numero % modulo) + modulo) % modulo;
+    for (let i = 1; i < modulo; i++) {
+        if ((numero * i) % modulo === 1) {
+            return i;
+        }
+    }
+    return 1;
+}
+
+function afastermethodforcalculateklarger(k, G) {
+    let R = null;
+    let kconst = k;
+    let addendo = G;
+    let num = 2;
+    while (k > 0) {
+        if (k % 2 === 1) {
+            R = calcolapunto(R, addendo);
+        }
+
+        addendo = calcolapunto(addendo, addendo);
+
+        k = Math.floor(k / 2);
+        if (num < kconst) {
+            log("G" + num + ": [" + addendo + "]");
+            num *= 2;
+        }
+    }
+	log("G" + kconst + ": [" + R + "]");
+    return R;
+}
+
+/* ---------- punti della curva ---------- */
+const curvePoints = [];
+for (let x = 0; x < modulo; x++)
+    for (let y = 0; y < modulo; y++)
+        if (((y * y - (x ** 3 + 7)) % modulo + modulo) % modulo === 0) curvePoints.push([x, y]);
+
+/* ---------- visualizzazione interattiva ---------- */
+const anim = { steps: [], frames: [], i: 0, timer: null, k: 0 };
+const NS = 400, PAD = 36, STEPPX = (NS - 2 * PAD) / (modulo - 1);
+const PX = x => PAD + x * STEPPX;
+const PY = y => NS - PAD - y * STEPPX;
+const keyOf = p => p ? p[0] + "," + p[1] : "inf";
+const neg = p => p ? [p[0], (modulo - p[1]) % modulo] : null;
+const fmtP = p => p ? "(" + p[0] + ", " + p[1] + ")" : "∞";
+
+const C_CURVE = "#777", C_REACHED = "#3b9de0", C_OPER = "#ff7f0e", C_RES = "#d62728", C_G = "#2ca02c", C_LINE = "#222";
+
+const multiples = {};
+let ordineG = 0;
+(function () {
+    let p = G, n = 1;
+    while (p && n < 60) {
+        if (!(keyOf(p) in multiples)) multiples[keyOf(p)] = n;
+        p = calcolapunto(G, p);
+        n++;
+    }
+    ordineG = n;
+})();
+
+function lineInfo(A, B) {
+    if (!A || !B) return null;
+    if (A[0] === B[0] && A[1] !== B[1]) return { vert: A[0] };
+    let num, den;
+    if (A[0] === B[0]) { num = (3 * A[0] ** 2) % modulo; den = (2 * A[1]) % modulo; }
+    else { num = B[1] - A[1]; den = B[0] - A[0]; }
+    if (((den % modulo) + modulo) % modulo === 0) return { vert: A[0] };
+    const m = (((num * inversoMoltiplicativo(den, modulo)) % modulo) + modulo) % modulo;
+    return { m: m, x1: A[0], y1: A[1] };
+}
+
+function costruisciPassi(k, mode) {
+    const steps = [];
+    if (mode === "classico") {
+        steps.push({ A: null, B: null, R: G, la: "", lb: "", desc: "start: 1G = G" });
+        let prev = G;
+        for (let i = 2; i <= k; i++) {
+            const R = calcolapunto(G, prev);
+            steps.push({ A: G, B: prev, R: R, la: "1G", lb: (i - 1) + "G", desc: i + "G = G + " + (i - 1) + "G" });
+            prev = R;
+        }
+    } else {
+        let R = null, add = G, kk = k, j = 0, p2 = 1;
+        steps.push({ A: null, B: null, R: G, la: "", lb: "", desc: "start: 1G = G" });
+        while (kk > 0) {
+            if (kk % 2 === 1) {
+                const nr = calcolapunto(R, add);
+                steps.push({ A: R, B: add, R: nr, la: "accumulator R", lb: p2 + "G", desc: "bit " + j + " of k is 1: R = R + " + p2 + "G" });
+                R = nr;
+            }
+            kk = Math.floor(kk / 2);
+            if (kk > 0) {
+                const nd = calcolapunto(add, add);
+                steps.push({ A: add, B: add, R: nd, la: p2 + "G", lb: p2 + "G", desc: "double: " + (2 * p2) + "G = 2 · " + p2 + "G" });
+                add = nd; p2 *= 2; j++;
+            }
+        }
+    }
+    return steps;
+}
+
+function costruisciFrames() {
+    const fr = [];
+    anim.steps.forEach((st, si) => {
+        if (st.A && st.B) {
+            const li = lineInfo(st.A, st.B);
+            const fasi = li && li.vert !== undefined ? [0, 1, 3] : [0, 1, 2, 3];
+            fasi.forEach(ph => fr.push({ si: si, ph: ph }));
+        } else fr.push({ si: si, ph: 3 });
+    });
+    anim.frames = fr;
+}
+
+function rettaAvvolta(li, xa, xb, col, w) {
+    const ms = li.m > 8 ? li.m - 17 : li.m;
+    let out = "", pts = [], prevY = null;
+    const flush = () => {
+        if (pts.length > 1) out += `<polyline points="${pts.join(" ")}" fill="none" stroke="${col}" stroke-width="${w}" stroke-linecap="round"/>`;
+        pts = [];
+    };
+    for (let x = xa; x <= xb + 1e-9; x += 0.02) {
+        const yr = li.y1 + ms * (x - li.x1);
+        const yw = ((((yr + 0.5) % 17) + 17) % 17) - 0.5;
+        if (prevY !== null && Math.abs(yw - prevY) > 8.5) flush();
+        pts.push(PX(x).toFixed(1) + "," + PY(yw).toFixed(1));
+        prevY = yw;
+    }
+    flush();
+    return out;
+}
+
+function didascalia(st, ph, li) {
+    const nome = n => n ? " [= " + n + "]" : "";
+    const same = st.A && st.B && keyOf(st.A) === keyOf(st.B);
+    if (!(st.A && st.B)) {
+        if (st.A === null && st.B === null) return "The starting point is G itself.";
+        return "The accumulator is empty (∞), so R + " + st.lb + " is just " + fmtP(st.R) + ". Nothing to draw.";
+    }
+    if (ph === 0) return same
+        ? "1. Take the point A = " + fmtP(st.A) + nome(st.lb) + ". We add it to itself, so the line will be the tangent at A."
+        : "1. Take the two points A = " + fmtP(st.A) + nome(st.la) + " and B = " + fmtP(st.B) + nome(st.lb) + ".";
+    if (ph === 1) return li.vert !== undefined
+        ? "2. The two points have the same x, so the line through them is vertical."
+        : "2. Draw the line through " + (same ? "A (tangent)" : "A and B") + ", slope m = " + li.m + " (mod 17). It is a single line: working mod 17, when it leaves the grid at the top it re-enters from the bottom.";
+    if (ph === 2) return "3. The line meets the curve in a third point T = " + fmtP(neg(st.R)) + ".";
+    if (li.vert !== undefined) return "3. A vertical line has no third intersection: the result is the point at infinity.";
+    return "4. Draw the vertical line through T. It meets the curve at R = " + fmtP(st.R) + ", the other point with the same x. So A + B = R.";
+}
+
+function disegnaPasso() {
+    const svg = document.getElementById("plot");
+    const info = document.getElementById("stepinfo");
+    const fr = anim.frames[anim.i];
+    const st = fr ? anim.steps[fr.si] : null;
+    const ph = fr ? fr.ph : -1;
+    const real = st && st.A && st.B;
+    const last = fr && anim.i === anim.frames.length - 1;
+    const halo = `stroke="#fff" stroke-width="3" paint-order="stroke" stroke-linejoin="round"`;
+    const lab = (p, t, col, dx, dy) => {
+        const at = `x="${PX(p[0]) + dx}" y="${PY(p[1]) + dy}" font-size="14" font-weight="bold" font-family="Arial"`;
+        return `<text ${at} fill="none" stroke="#fff" stroke-width="3.5" stroke-linejoin="round">${t}</text><text ${at} fill="${col}">${t}</text>`;
+    };
+    let s = "";
+
+    s += `<rect x="${PX(-0.5)}" y="${PY(16.5)}" width="${PX(16.5) - PX(-0.5)}" height="${PY(-0.5) - PY(16.5)}" fill="#fff" stroke="#333"/>`;
+    for (let i = 0; i < modulo; i++) {
+        s += `<line x1="${PX(i)}" y1="${PY(-0.5)}" x2="${PX(i)}" y2="${PY(16.5)}" stroke="#ececec"/>`;
+        s += `<line x1="${PX(-0.5)}" y1="${PY(i)}" x2="${PX(16.5)}" y2="${PY(i)}" stroke="#ececec"/>`;
+        if (i % 2 === 0) {
+            s += `<text x="${PX(i)}" y="${PY(-0.5) + 14}" font-size="10" fill="#555" text-anchor="middle" font-family="Arial">${i}</text>`;
+            s += `<text x="${PX(-0.5) - 6}" y="${PY(i) + 3}" font-size="10" fill="#555" text-anchor="end" font-family="Arial">${i}</text>`;
+        }
+    }
+    s += `<text x="${NS / 2}" y="${NS - 4}" font-size="11" fill="#333" text-anchor="middle" font-family="Arial">x</text>`;
+    s += `<text x="9" y="${NS / 2}" font-size="11" fill="#333" text-anchor="middle" font-family="Arial">y</text>`;
+
+    const vis = new Set();
+    if (fr) {
+        for (let j = 0; j < fr.si; j++) vis.add(keyOf(anim.steps[j].R));
+        if (ph === 3) vis.add(keyOf(st.R));
+    }
+    curvePoints.forEach(p => {
+        s += `<circle cx="${PX(p[0])}" cy="${PY(p[1])}" r="3.6" fill="${vis.has(keyOf(p)) ? C_REACHED : C_CURVE}"/>`;
+    });
+    s += `<circle cx="${PX(G[0])}" cy="${PY(G[1])}" r="5" fill="${C_G}"/>` + lab(G, "G", C_G, 8, 16);
+
+    let T = null;
+    if (st) {
+        const li = real ? lineInfo(st.A, st.B) : null;
+        const vert = li && li.vert !== undefined;
+        if (real) {
+            if (ph >= 1) {
+                if (vert) s += `<line x1="${PX(li.vert)}" y1="${PY(-0.5)}" x2="${PX(li.vert)}" y2="${PY(16.5)}" stroke="${C_LINE}" stroke-width="1.8"/>`;
+                else {
+                    const xs3 = [st.A[0], st.B[0]];
+                    if (st.R) xs3.push(st.R[0]);
+                    if (document.getElementById("fullLine").checked) s += rettaAvvolta(li, -0.5, 16.5, "#a9d3ee", 1.2);
+                    s += rettaAvvolta(li, Math.min(...xs3), Math.max(...xs3), C_LINE, 2);
+                }
+            }
+            if (ph >= 2 && !vert) {
+                T = neg(st.R);
+                s += `<circle cx="${PX(T[0])}" cy="${PY(T[1])}" r="8" fill="#fff" fill-opacity=".6" stroke="${C_RES}" stroke-width="2" stroke-dasharray="3 2"/>` + lab(T, "T", C_RES, 11, 17);
+            }
+            if (ph >= 3 && !vert) {
+                s += `<line x1="${PX(T[0])}" y1="${PY(-0.5)}" x2="${PX(T[0])}" y2="${PY(16.5)}" stroke="${C_RES}" stroke-width="1.6" stroke-dasharray="5 4"/>`;
+            }
+            const same = keyOf(st.A) === keyOf(st.B);
+            s += `<circle cx="${PX(st.A[0])}" cy="${PY(st.A[1])}" r="8.5" fill="none" stroke="${C_OPER}" stroke-width="2.5"/>`;
+            s += `<circle cx="${PX(st.B[0])}" cy="${PY(st.B[1])}" r="8.5" fill="none" stroke="${C_OPER}" stroke-width="2.5"/>`;
+            s += lab(st.A, same ? "A = B" : "A", C_OPER, 11, -9);
+            if (!same) s += lab(st.B, "B", C_OPER, 11, -9);
+        } else if (st.B) {
+            s += `<circle cx="${PX(st.B[0])}" cy="${PY(st.B[1])}" r="8.5" fill="none" stroke="${C_OPER}" stroke-width="2.5"/>`;
+        }
+        if (ph === 3 && st.R) {
+            s += `<circle cx="${PX(st.R[0])}" cy="${PY(st.R[1])}" r="6.5" fill="${C_RES}"/>` + lab(st.R, last ? "Q" : "R", C_RES, 11, -9);
+        }
+
+        const stesso = anim.frames.filter(f => f.si === fr.si);
+        const idx = stesso.indexOf(fr) + 1;
+        let h = `<b>Step ${fr.si + 1} of ${anim.steps.length}:</b> ${st.desc}`;
+        if (real) h += ` &nbsp;(stage ${idx}/${stesso.length})`;
+        h += `<br>${didascalia(st, ph, li)}`;
+        if (last) h += `<br><b>Q = ${anim.k}G = ${fmtP(st.R)}</b>`;
+        info.innerHTML = h;
+    } else {
+        info.innerHTML = "";
+    }
+    svg.innerHTML = s;
+}
+
+function disegnaSequenza() {
+    const box = document.getElementById("seqbox");
+    const n2 = ordineG * 2;
+    const pts = [];
+    let p = null;
+    for (let n = 1; n <= n2; n++) { p = calcolapunto(p, G); pts.push(p); }
+    const cur = anim.k ? anim.k % ordineG : -1;
+    let h = "";
+    [0, 1].forEach(r => {
+        h += `<table class="seq" style="margin-bottom:6px"><tr><th>k</th>`;
+        for (let n = r * ordineG + 1; n <= (r + 1) * ordineG; n++) h += `<th>${n}</th>`;
+        h += `</tr><tr><th>kG</th>`;
+        for (let n = r * ordineG + 1; n <= (r + 1) * ordineG; n++)
+            h += `<td data-k="${n}" class="${n % ordineG === cur ? "on" : ""}">${pts[n - 1] ? pts[n - 1][0] + "," + pts[n - 1][1] : "∞"}</td>`;
+        h += `</tr></table>`;
+    });
+    box.innerHTML = h;
+}
+
+function initAnim(k, mode) {
+    fermaAnim();
+    anim.k = k;
+    anim.steps = k ? costruisciPassi(k, mode) : [];
+    costruisciFrames();
+    anim.i = 0;
+    const r = document.getElementById("stepRange");
+    r.max = Math.max(anim.frames.length - 1, 0);
+    r.value = 0;
+    disegnaPasso();
+    disegnaSequenza();
+    if (anim.frames.length > 1) avviaAnim();
+}
+
+function vaiA(i) {
+    if (!anim.frames.length) return;
+    anim.i = Math.max(0, Math.min(i, anim.frames.length - 1));
+    document.getElementById("stepRange").value = anim.i;
+    disegnaPasso();
+}
+
+function avviaAnim() {
+    fermaAnim();
+    const ms = +document.getElementById("speed").value;
+    anim.timer = setInterval(() => {
+        if (anim.i >= anim.frames.length - 1) { fermaAnim(); return; }
+        vaiA(anim.i + 1);
+    }, ms);
+    document.getElementById("btnPlay").textContent = "Pause";
+}
+
+function fermaAnim() {
+    clearInterval(anim.timer);
+    anim.timer = null;
+    const b = document.getElementById("btnPlay");
+    if (b) b.textContent = "Play";
+}
+
+function togglePlay() {
+    if (anim.timer) { fermaAnim(); return; }
+    if (anim.i >= anim.frames.length - 1) vaiA(0);
+    avviaAnim();
+}
+
+function cambiaVelocita() { if (anim.timer) avviaAnim(); }
+
+(function () {
+    const svg = document.getElementById("plot");
+    const info = document.getElementById("hoverinfo");
+    const base = info.textContent;
+    function trova(ev) {
+        const r = svg.getBoundingClientRect();
+        const x = (ev.clientX - r.left) * NS / r.width;
+        const y = (ev.clientY - r.top) * NS / r.height;
+        let best = null, bd = 12;
+        curvePoints.forEach(p => {
+            const d = Math.hypot(PX(p[0]) - x, PY(p[1]) - y);
+            if (d < bd) { bd = d; best = p; }
+        });
+        return best;
+    }
+    svg.addEventListener("mousemove", ev => {
+        const p = trova(ev);
+        svg.style.cursor = p && multiples[keyOf(p)] ? "pointer" : "default";
+        if (!p) { info.textContent = base; return; }
+        const n = multiples[keyOf(p)];
+        info.textContent = fmtP(p) + "  " + (n ? "= " + n + "G, and every k = " + n + " (mod " + ordineG + ")" : "not in the subgroup generated by G");
+    });
+    svg.addEventListener("mouseleave", () => { info.textContent = base; });
+    svg.addEventListener("click", ev => {
+        const p = trova(ev);
+        if (!p) return;
+        const n = multiples[keyOf(p)];
+        if (!n) return;
+        document.getElementById("k").value = n;
+        esegui(modoCorrente);
+    });
+    document.getElementById("seqbox").addEventListener("click", ev => {
+        const c = ev.target.closest("td[data-k]");
+        if (!c) return;
+        document.getElementById("k").value = c.getAttribute("data-k");
+        esegui(modoCorrente);
+    });
+})();
+
+(function () {
+    const sel = document.getElementById("statP");
+    curvePoints.filter(p => p[1] !== 0).forEach(p => {
+        const o = document.createElement("option");
+        o.value = p.join(",");
+        o.textContent = "(" + p[0] + ", " + p[1] + ")" + (p[0] === G[0] && p[1] === G[1] ? "  (default G)" : "");
+        if (p[0] === G[0] && p[1] === G[1]) o.selected = true;
+        sel.appendChild(o);
+    });
+})();
+
+/* Statistiche */
+function statMul(k, P) {
+    let R = null, add = P;
+    while (k > 0) {
+        if (k % 2 === 1) R = calcolapunto(R, add);
+        add = calcolapunto(add, add);
+        k = Math.floor(k / 2);
+    }
+    return R;
+}
+
+function statChi2(freq, atteso) {
+    const n = freq.reduce((a, b) => a + b, 0);
+    const e = atteso != null ? atteso : n / freq.length;
+    return freq.reduce((s, o) => s + (o - e) ** 2 / e, 0);
+}
+
+function chiCritico(df) {
+    const a = 2 / (9 * df);
+    return df * Math.pow(1 - a + 1.645 * Math.sqrt(a), 3);
+}
+
+function statPearson(a, b) {
+    const n = a.length;
+    const ma = a.reduce((s, v) => s + v, 0) / n;
+    const mb = b.reduce((s, v) => s + v, 0) / n;
+    let num = 0, da = 0, db = 0;
+    for (let i = 0; i < n; i++) {
+        num += (a[i] - ma) * (b[i] - mb);
+        da += (a[i] - ma) ** 2;
+        db += (b[i] - mb) ** 2;
+    }
+    return num / Math.sqrt(da * db);
+}
+
+function statBitsPunto(Q) { return Q ? (Q[0] << 5) | Q[1] : 0; }
+function statPopcount(v) { let c = 0; while (v) { c += v & 1; v >>= 1; } return c; }
+function binom(n, r) { let c = 1; for (let i = 1; i <= r; i++) c = c * (n - r + i) / i; return c; }
+
+function barre(data, o) {
+    const W = 340, H = 170, l = 34, r = 8, t = 10, b = 22;
+    const max = o.max || Math.max(...data, o.expected || 0, 1e-9) * 1.15;
+    const bw = (W - l - r) / data.length;
+    const fmt = o.fmt || (v => Math.round(v));
+    let s = `<line x1="${l}" y1="${t}" x2="${l}" y2="${H - b}" stroke="#333"/><line x1="${l}" y1="${H - b}" x2="${W - r}" y2="${H - b}" stroke="#333"/>`;
+    for (let i = 0; i <= 2; i++) {
+        const y = H - b - (H - b - t) * i / 2;
+        s += `<line x1="${l}" x2="${W - r}" y1="${y}" y2="${y}" stroke="#e3e3e3"/>`;
+        s += `<text x="${l - 4}" y="${y + 3}" font-size="10" font-family="Arial" fill="#444" text-anchor="end">${fmt(max * i / 2)}</text>`;
+    }
+    data.forEach((v, i) => {
+        const h = (H - b - t) * v / max;
+        s += `<rect x="${l + i * bw + 1}" y="${H - b - h}" width="${Math.max(bw - 2, 1)}" height="${h}" fill="${o.color || "#3b9de0"}"/>`;
+        if (o.labels && (data.length <= 17 || i % 2 === 0))
+            s += `<text x="${l + i * bw + bw / 2}" y="${H - 7}" font-size="10" font-family="Arial" fill="#444" text-anchor="middle">${o.labels[i]}</text>`;
+    });
+    if (o.expected != null) {
+        const y = H - b - (H - b - t) * o.expected / max;
+        s += `<line x1="${l}" x2="${W - r}" y1="${y}" y2="${y}" stroke="#d62728" stroke-dasharray="4 3"/>`;
+    }
+    if (o.marks) {
+        o.marks.forEach((v, i) => {
+            const y = H - b - (H - b - t) * v / max;
+            s += `<line x1="${l + i * bw + 2}" x2="${l + i * bw + bw - 2}" y1="${y}" y2="${y}" stroke="#000" stroke-width="2"/>`;
+        });
+    }
+    return s;
+}
+
+function dispersione(ks, xs, ys) {
+    const W = 340, H = 170, l = 34, r = 8, t = 10, b = 22;
+    const kmax = ks[ks.length - 1];
+    const px = k => l + (k - 1) / Math.max(kmax - 1, 1) * (W - l - r);
+    const py = v => H - b - (H - b - t) * v / 16;
+    let s = `<line x1="${l}" y1="${t}" x2="${l}" y2="${H - b}" stroke="#333"/><line x1="${l}" y1="${H - b}" x2="${W - r}" y2="${H - b}" stroke="#333"/>`;
+    [0, 8, 16].forEach(v => {
+        s += `<line x1="${l}" x2="${W - r}" y1="${py(v)}" y2="${py(v)}" stroke="#e3e3e3"/>`;
+        s += `<text x="${l - 4}" y="${py(v) + 3}" font-size="10" font-family="Arial" fill="#444" text-anchor="end">${v}</text>`;
+    });
+    s += `<text x="${l}" y="${H - 7}" font-size="10" font-family="Arial" fill="#444">k = 1</text><text x="${W - r}" y="${H - 7}" font-size="10" font-family="Arial" fill="#444" text-anchor="end">${kmax}</text>`;
+    ks.forEach((k, i) => {
+        s += `<circle cx="${px(k)}" cy="${py(xs[i])}" r="2.6" fill="#2f8fd0"/>`;
+        s += `<circle cx="${px(k)}" cy="${py(ys[i])}" r="2.6" fill="#d62728"/>`;
+    });
+    return s;
+}
+
+function riga(nome, valore, commento) {
+    return `<tr><td>${nome}</td><td class="m">${valore}</td><td>${commento || ""}</td></tr>`;
+}
+
+function eseguiStatistiche() {
+    const msg = document.getElementById("statmsg");
+    const box = document.getElementById("results");
+    let N = parseInt(document.getElementById("statN").value);
+    if (!N || N < 2) { msg.textContent = "Enter a valid N (integer >= 2)"; box.style.display = "none"; return; }
+    msg.textContent = "";
+    if (N > 5000) { N = 5000; document.getElementById("statN").value = N; }
+
+    const P = document.getElementById("statP").value.split(",").map(Number);
+
+    const pts = [];
+    for (let k = 1; k <= N; k++) pts.push(statMul(k, P));
+
+    let ordine = null;
+    for (let k = 1; k <= 60; k++) { if (statMul(k, P) === null) { ordine = k; break; } }
+
+    const fx = new Array(modulo).fill(0);
+    const fy = new Array(modulo).fill(0);
+    const fp = {};
+    pts.forEach(Q => {
+        const key = Q ? "(" + Q[0] + "," + Q[1] + ")" : "inf";
+        fp[key] = (fp[key] || 0) + 1;
+        if (Q) { fx[Q[0]]++; fy[Q[1]]++; }
+    });
+    const distinti = Object.keys(fp).length;
+    const nfin = pts.filter(Q => Q).length;
+
+    const critico = chiCritico(modulo - 1);
+    const cx = statChi2(fx, nfin / modulo), cy = statChi2(fy, nfin / modulo);
+    const freqPunti = Object.values(fp);
+    const cp = ordine ? statChi2(freqPunti, N / ordine) : 0;
+    const critP = ordine > 1 ? chiCritico(ordine - 1) : 0;
+
+    let coppie = true;
+    Object.keys(fp).forEach(key => {
+        if (key === "inf") return;
+        const m = key.match(/\((\d+),(\d+)\)/);
+        const x = +m[1], y = +m[2];
+        if (!fp["(" + x + "," + ((modulo - y) % modulo) + ")"]) coppie = false;
+    });
+
+    const ones = new Array(10).fill(0);
+    pts.forEach(Q => {
+        if (!Q) return;
+        for (let b = 0; b < 5; b++) {
+            ones[b] += (Q[0] >> b) & 1;
+            ones[5 + b] += (Q[1] >> b) & 1;
+        }
+    });
+    const pbit = ones.map(o => nfin ? o / nfin : 0);
+
+    const ks = [], xs = [], ys = [];
+    pts.forEach((Q, i) => { if (Q) { ks.push(i + 1); xs.push(Q[0]); ys.push(Q[1]); } });
+    const rx = statPearson(ks, xs), ry = statPearson(ks, ys);
+
+    let diversi = 0;
+    for (let k = 1; k <= N; k++) {
+        const r = k % ordine;
+        const a = pts[k - 1];
+        const b = r === 0 ? null : pts[r - 1];
+        if (JSON.stringify(a) !== JSON.stringify(b)) diversi++;
+    }
+
+    const nbit = Math.max(1, Math.floor(Math.log2(N)) + 1);
+    const hist = new Array(11).fill(0);
+    let tot = 0, cnt = 0;
+    for (let k = 1; k <= N; k++) {
+        for (let b = 0; b < nbit; b++) {
+            const k2 = k ^ (1 << b);
+            if (k2 < 1) continue;
+            const d = statPopcount(statBitsPunto(statMul(k, P)) ^ statBitsPunto(statMul(k2, P)));
+            hist[d]++; tot += d; cnt++;
+        }
+    }
+    const media = tot / cnt;
+    const histN = hist.map(h => h / cnt);
+    const ideale = hist.map((_, d) => binom(10, d) / 1024);
+
+    document.getElementById("restab").innerHTML =
+        "<tr><th>Quantity</th><th>Value</th><th>Comment</th></tr>" +
+        riga("Order of G", ordine, "smallest n with nG = point at infinity") +
+        riga("Distinct points", distinti, "out of " + (curvePoints.length + 1) + " points in the whole group") +
+        riga("Chi-squared, x", cx.toFixed(1), (cx > critico ? "uniformity rejected" : "compatible with uniform") + " (5% limit " + critico.toFixed(1) + ", 16 d.o.f.)") +
+        riga("Chi-squared, y", cy.toFixed(1), (cy > critico ? "uniformity rejected" : "compatible with uniform") + " (5% limit " + critico.toFixed(1) + ", 16 d.o.f.)") +
+        riga("Chi-squared, points", cp.toFixed(1), ordine > 1 ? (cp > critP ? "not uniform" : "uniform inside the subgroup") + " (5% limit " + critP.toFixed(1) + ", " + (ordine - 1) + " d.o.f.)" : "") +
+        riga("Pairs (x, ±y)", coppie ? "yes" : "no", "every point appears together with its opposite (x, −y)") +
+        riga("Correlation k–x", rx.toFixed(3), "linear (Pearson)") +
+        riga("Correlation k–y", ry.toFixed(3), "linear (Pearson)") +
+        riga("Depends only on k mod " + ordine, diversi === 0 ? "yes" : "no", diversi + " mismatches out of " + N) +
+        riga("Avalanche", media.toFixed(2) + " / 10", "average number of changed output bits (ideal hash: about 5)");
+
+    const lab = [...Array(modulo).keys()];
+    document.getElementById("cx").innerHTML = barre(fx, { labels: lab, expected: nfin / modulo });
+    document.getElementById("cy").innerHTML = barre(fy, { labels: lab, expected: nfin / modulo, color: "#ff7f0e" });
+
+    const chiavi = Object.keys(fp).filter(k => k !== "inf");
+    document.getElementById("cp").innerHTML = barre(chiavi.map(k => fp[k]), { labels: chiavi.map((k, i) => i + 1), expected: N / ordine, color: "#2ca02c" });
+
+    document.getElementById("cb").innerHTML = barre(pbit, { labels: ["x0", "x1", "x2", "x3", "x4", "y0", "y1", "y2", "y3", "y4"], expected: 0.5, max: 1, fmt: v => v.toFixed(1) });
+
+    const nShow = Math.min(ks.length, 60);
+    document.getElementById("cs").innerHTML = dispersione(ks.slice(0, nShow), xs.slice(0, nShow), ys.slice(0, nShow));
+
+    document.getElementById("ca").innerHTML = barre(histN, { labels: [...Array(11).keys()], marks: ideale, fmt: v => v.toFixed(2), max: Math.max(...histN, ...ideale) * 1.15 });
+
+    box.style.display = "block";
+}
+</script>
+</body>
+</html>
