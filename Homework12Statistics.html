@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -123,7 +123,6 @@
     
     document.getElementById(pageId).style.display = 'block';
 
-    // Inizializza il grafico dell'Homework 1 SOLO quando viene mostrato per la prima volta
     if (pageId === 'hw1_page' && !hw1Initialized) {
       esegui("faster");
       hw1Initialized = true;
@@ -141,8 +140,8 @@
   </header>
   <div class="content">
     <section class="card" style="text-align: center; padding: 50px 20px;">
-      <h2 style="justify-content: center; font-size: 1.6rem; margin-bottom: 20px;">Select the homework</h2>
-      
+      <h2 style="justify-content: center; font-size: 1.6rem; margin-bottom: 20px;">Welcome</h2>
+      <p style="margin-bottom: 35px; color: var(--muted); font-size: 1.1rem;">Select the homework you wish to view:</p>
       
       <button class="nav-btn" onclick="showPage('hw1_page')">Homework 1 (ECC)</button>
       <button class="nav-btn" onclick="showPage('hw2_page')">Homework 2 (Ethereum)</button>
@@ -155,7 +154,7 @@
 <!-- HOMEWORK 1: TOY ECC                            -->
 <!-- ============================================== -->
 <div id="hw1_page" class="sheet" style="display: none;">
-  <button class="ghost" onclick="showPage('home_page')" style="margin-bottom: 15px;">&laquo; Torna alla Home</button>
+  <button class="ghost" onclick="showPage('home_page')" style="margin-bottom: 15px;">&laquo; Back to Home</button>
   <header>
     <h1>Public key from a private key (toy ECC)</h1>
     <p class="sub">Curve y² = x³ + 7 (mod 17), base point G = (1, 5), public key Q = kG.</p>
@@ -266,7 +265,7 @@
 <!-- HOMEWORK 2: ETHEREUM PIPELINE                  -->
 <!-- ============================================== -->
 <div id="hw2_page" class="sheet" style="display: none;">
-  <button class="ghost" onclick="showPage('home_page')" style="margin-bottom: 15px;">&laquo; Torna alla Home</button>
+  <button class="ghost" onclick="showPage('home_page')" style="margin-bottom: 15px;">&laquo; Back to Home</button>
   <header>
     <h1>HMWK 2 &mdash; From Wallet Seed to Ethereum Address</h1>
     <p class="sub">Hashing, Key Derivation and Cryptographic Primitives</p>
@@ -276,10 +275,10 @@
     <section class="card">
       <h2><span class="num">1</span>The Cryptographic Pipeline Overview</h2>
       <p>
-        Un wallet moderno (come MetaMask, Rabby o Exodus) non genera semplicemente chiavi a caso, ma utilizza una rigorosa e deterministica pipeline crittografica per trasformare una sequenza mnemonica di parole in un indirizzo esadecimale Ethereum completo di checksum.
+        A modern wallet (like MetaMask, Rabby, or Exodus) does not simply generate keys at random, but uses a strict and deterministic cryptographic pipeline to transform a mnemonic sequence of words into a hexadecimal Ethereum address complete with a checksum.
       </p>
       <div class="pipeline">
-        <div class="pipeline-step">Mnemonic Phrase (es. 12-24 words)</div>
+        <div class="pipeline-step">Mnemonic Phrase (e.g. 12-24 words)</div>
         <div class="arrow">↓ BIP-39 (PBKDF2 + HMAC-SHA512) ↓</div>
         <div class="pipeline-step">Root Seed (512-bit)</div>
         <div class="arrow">↓ BIP-32 / BIP-44 (HD Key Derivation) ↓</div>
@@ -295,81 +294,81 @@
 
     <section class="card">
       <h2><span class="num">2</span>In-Depth Analysis of Pipeline Nodes</h2>
-      <p>Di seguito un'analisi profonda di ogni singolo standard e primitiva matematica che compone il viaggio dall'entropia iniziale all'indirizzo pubblico.</p>
+      <p>Below is an in-depth analysis of every single standard and mathematical primitive that makes up the journey from the initial entropy to the public address.</p>
       
-      <h3>BIP-39: Generazione Mnemonic e Seed</h3>
+      <h3>BIP-39: Mnemonic and Seed Generation</h3>
       <ul>
-        <li><strong>Entropia Iniziale:</strong> Il processo inizia generando da 128 a 256 bit di pura casualità. A questa entropia viene appeso un piccolo checksum (derivato da SHA-256).</li>
-        <li><strong>Mnemonic Sentence:</strong> La sequenza di bit risultante viene frammentata in gruppi da 11 bit. Ogni gruppo agisce come indice (da 0 a 2047) per mappare una specifica parola all'interno della wordlist standard di BIP-39. Questo permette agli umani di scrivere e ricordare facilmente il proprio backup.</li>
-        <li><strong>Key Stretching (PBKDF2):</strong> Per convertire le parole in un seme utilizzabile (e per difendersi da attacchi di forza bruta), la mnemonic phrase viene concatenata con un salt opzionale (di default la stringa <code>"mnemonic"</code>) e passata attraverso la funzione <strong>PBKDF2</strong> usando HMAC-SHA512 per <strong>2048 iterazioni</strong>. Il risultato è il Root Seed a 512 bit.</li>
+        <li><strong>Initial Entropy:</strong> The process begins by generating 128 to 256 bits of pure randomness. A small checksum (derived from SHA-256) is appended to this entropy.</li>
+        <li><strong>Mnemonic Sentence:</strong> The resulting bit sequence is split into 11-bit groups. Each group acts as an index (from 0 to 2047) to map a specific word within the standard BIP-39 wordlist. This allows humans to easily write down and remember their backup.</li>
+        <li><strong>Key Stretching (PBKDF2):</strong> To convert the words into a usable seed (and to defend against brute-force attacks), the mnemonic phrase is concatenated with an optional salt (defaulting to the string <code>"mnemonic"</code>) and passed through the <strong>PBKDF2</strong> function using HMAC-SHA512 for <strong>2048 iterations</strong>. The result is the 512-bit Root Seed.</li>
       </ul>
 
       <h3>BIP-32: Hierarchical Deterministic (HD) Key Derivation</h3>
       <ul>
-        <li>Il Root Seed a 512 bit viene diviso a metà: i primi 256 bit diventano la <strong>Master Private Key</strong>, i secondi 256 bit diventano il <strong>Master Chain Code</strong> (che serve come entropia aggiuntiva).</li>
-        <li>BIP-32 definisce la matematica per generare un "albero" infinito di chiavi figlie partendo da questo singolo nodo padre, permettendo di generare miliardi di indirizzi validi da un'unica frase mnemonica iniziale, evitando la necessità di fare backup di ogni nuova chiave generata.</li>
+        <li>The 512-bit Root Seed is split in half: the first 256 bits become the <strong>Master Private Key</strong>, and the second 256 bits become the <strong>Master Chain Code</strong> (which serves as additional entropy).</li>
+        <li>BIP-32 defines the mathematics to generate an infinite "tree" of child keys starting from this single master node. This allows the generation of billions of valid addresses from a single initial mnemonic phrase, without the need to back up every newly generated key.</li>
       </ul>
 
       <h3>BIP-44: Standard Derivation Paths</h3>
       <ul>
-        <li>Mentre BIP-32 definisce <em>come</em> derivare le chiavi, BIP-44 definisce <em>dove</em> derivarle, creando un albero logico formattato come: <code>m / purpose' / coin_type' / account' / change / address_index</code>.</li>
-        <li>Ad esempio, per Ethereum il percorso standard è <code>m/44'/60'/0'/0/x</code>. Il numero <strong>60'</strong> è il codice assegnato alla rete Ethereum. Cambiando solo l'ultimo parametro (l'indice), il wallet genera infiniti indirizzi consecutivi per l'utente.</li>
+        <li>While BIP-32 defines <em>how</em> to derive keys, BIP-44 defines <em>where</em> to derive them, creating a logical tree formatted as: <code>m / purpose' / coin_type' / account' / change / address_index</code>.</li>
+        <li>For example, for Ethereum, the standard path is <code>m/44'/60'/0'/0/x</code>. The number <strong>60'</strong> is the registered coin type for the Ethereum network. By changing only the last parameter (the index), the wallet generates infinite consecutive addresses for the user.</li>
       </ul>
 
-      <h3>secp256k1: Crittografia a Curva Ellittica</h3>
+      <h3>secp256k1: Elliptic Curve Cryptography</h3>
       <ul>
-        <li>Una volta ottenuta la Private Key (un enorme numero intero a 256 bit), questa viene moltiplicata per il <strong>Generator Point (G)</strong> sulla curva ellittica standardizzata secp256k1. L'operazione è monodirezionale (grazie al problema del logaritmo discreto ECDLP).</li>
-        <li>L'output è una coordinata (X, Y) sulla curva, che rappresenta la <strong>Public Key</strong>. Mentre in Bitcoin si usa spesso il formato compresso, Ethereum utilizza la chiave pubblica <strong>non compressa</strong> a 64 byte (rimuovendo il prefisso standard <code>0x04</code>).</li>
+        <li>Once the Private Key (a massive 256-bit integer) is obtained, it is multiplied by the <strong>Generator Point (G)</strong> on the standardized secp256k1 elliptic curve. The operation is one-way (thanks to the Elliptic Curve Discrete Logarithm Problem, ECDLP).</li>
+        <li>The output is an (X, Y) coordinate on the curve, representing the <strong>Public Key</strong>. While Bitcoin often uses the compressed format, Ethereum uses the <strong>uncompressed</strong> 64-byte public key (removing the standard <code>0x04</code> prefix).</li>
       </ul>
 
       <h3>Keccak-256: Hashing</h3>
       <ul>
-        <li>La chiave pubblica di 64 byte viene data in pasto alla funzione di hash <strong>Keccak-256</strong>. Keccak utilizza una complessa "sponge construction" (absorb and squeeze) per mescolare i dati in modo irreversibile.</li>
-        <li>L'output del Keccak è una stringa a 32 byte (256 bit). Ethereum prende unicamente gli <strong>ultimi 20 byte</strong> (che corrispondono a 40 caratteri esadecimali) di questo hash. Questo troncamento diventerà l'indirizzo grezzo Ethereum.</li>
+        <li>The 64-byte public key is fed into the <strong>Keccak-256</strong> hash function. Keccak uses a complex "sponge construction" (absorb and squeeze) to irreversibly mix the data.</li>
+        <li>The output of the Keccak function is a 32-byte (256-bit) string. Ethereum takes only the <strong>last 20 bytes</strong> (which correspond to 40 hexadecimal characters) of this hash. This truncation becomes the raw Ethereum address.</li>
       </ul>
 
       <h3>EIP-55: Mixed-case Checksum Encoding</h3>
       <ul>
-        <li>Poiché gli indirizzi grezzi esadecimali non hanno meccanismi di sicurezza intrinseci, un singolo carattere digitato male comporterebbe la perdita irreparabile di fondi. Vitalik Buterin ha introdotto <strong>EIP-55</strong> per risolvere il problema senza modificare il protocollo di base.</li>
-        <li><strong>Come funziona:</strong> L'indirizzo grezzo (in lowercase) viene hashato nuovamente con Keccak-256. L'algoritmo controlla ogni singolo carattere esadecimale dell'indirizzo: se è una lettera (a-f), verifica il nibble (mezzo byte) corrispondente nell'hash appena calcolato. Se il nibble è <code>>= 8</code>, la lettera dell'indirizzo viene <strong>convertita in maiuscolo</strong>. Questo crea un pattern di capitalizzazione univoco. Se un utente sbaglia a digitare, l'hash cambia drasticamente e il pattern maiuscolo/minuscolo non coincide più, permettendo al software (es. MetaMask) di bloccare la transazione.</li>
+        <li>Since raw hexadecimal addresses have no built-in safety mechanisms, a single mistyped character would result in an irreversible loss of funds. Vitalik Buterin introduced <strong>EIP-55</strong> to solve this problem without modifying the base protocol.</li>
+        <li><strong>How it works:</strong> The raw address (in lowercase) is hashed again with Keccak-256. The algorithm checks every single hexadecimal character of the address: if it is a letter (a-f), it checks the corresponding nibble (half-byte) in the newly calculated hash. If the nibble is <code>>= 8</code>, the letter in the address is <strong>capitalized</strong>. This creates a unique capitalization pattern. If a user makes a typo, the hash changes drastically and the uppercase/lowercase pattern no longer matches, allowing software (e.g., MetaMask) to block the transaction.</li>
       </ul>
     </section>
 
     <section class="card">
-      <h2><span class="num">3</span>Distinzioni Cruciali e Scopo dei Primitivi</h2>
+      <h2><span class="num">3</span>Crucial Distinctions and Purpose of Primitives</h2>
       <table class="cmp">
         <tr><th>Concept</th><th>Definition & Role</th></tr>
-        <tr><td><strong>Key Generation & Derivation</strong></td><td>La <em>generazione</em> è la creazione dell'entropia iniziale (BIP-39). La <em>derivazione</em> (BIP-32/44) è la logica matematica usata per gestire sistematicamente un'infinità di chiavi a partire da quel seed senza dover salvare nient'altro.</td></tr>
-        <tr><td><strong>Public-Key Cryptography</strong></td><td>Garantisce la proprietà. Sfruttando la matematica delle curve (secp256k1), permette a un utente di firmare transazioni (dimostrando di possedere la Private Key) senza rivelare al network nient'altro che la Public Key.</td></tr>
-        <tr><td><strong>Hashing</strong></td><td>L'hashing (Keccak-256) garantisce determinismo a senso unico. Nasconde parzialmente la Public Key finché non avviene una transazione e riduce i 64 byte a un formato standard a 20 byte più facile da processare.</td></tr>
-        <tr><td><strong>Checksums & Encoding</strong></td><td>(EIP-55). Regole di formattazione che agiscono esclusivamente a livello di interfaccia software. Prevengono gli errori umani (typos) senza alterare le fondamenta crittografiche del protocollo Ethereum.</td></tr>
+        <tr><td><strong>Key Generation & Derivation</strong></td><td><em>Generation</em> is the creation of initial entropy (BIP-39). <em>Derivation</em> (BIP-32/44) is the mathematical logic used to systematically manage an infinity of keys from that seed without having to save anything else.</td></tr>
+        <tr><td><strong>Public-Key Cryptography</strong></td><td>Guarantees ownership. By leveraging curve mathematics (secp256k1), it allows a user to sign transactions (proving ownership of the Private Key) without revealing anything to the network other than the Public Key.</td></tr>
+        <tr><td><strong>Hashing</strong></td><td>Hashing (Keccak-256) guarantees one-way determinism. It partially hides the Public Key until a transaction occurs and reduces the 64 bytes to a standard 20-byte format that is easier to process.</td></tr>
+        <tr><td><strong>Checksums & Encoding</strong></td><td>(EIP-55). Formatting rules that act exclusively at the software interface level. They prevent human errors (typos) without altering the cryptographic foundations of the Ethereum protocol.</td></tr>
       </table>
     </section>
 
     <section class="card">
-      <h2><span class="num">4</span>Contesto Storico (Temporal Context)</h2>
-      <p>Queste tecnologie non sono nate contemporaneamente; sono il risultato di decenni di evoluzione nella teoria dell'informazione e nella sicurezza informatica:</p>
+      <h2><span class="num">4</span>Historical Context (Temporal Context)</h2>
+      <p>These technologies were not born simultaneously; they are the result of decades of evolution in information theory and cybersecurity:</p>
       <ul>
-        <li><strong>1977 - RSA:</strong> Rivest, Shamir e Adleman introducono la crittografia a chiave pubblica asimmetrica, gettando le basi concettuali per sistemi come Bitcoin ed Ethereum.</li>
-        <li><strong>2001 - SHA-2 / SHA-512:</strong> Standardizzato dal NIST. Molto solido, viene infatti utilizzato in BIP-39 all'interno del processo PBKDF2 per espandere la stringa mnemonica nel seed.</li>
-        <li><strong>2012 - BIP-32:</strong> Introdotto per risolvere il grave problema dei primi wallet Bitcoin che richiedevano continui backup ogni volta che veniva generata una nuova chiave (JBOK - Just a Bunch Of Keys). Nascono i wallet deterministici.</li>
-        <li><strong>2013 - BIP-39:</strong> Un salto di qualità per l'Usability. Sostituisce stringhe esadecimali impossibili da ricordare con semplici elenchi di parole inglesi.</li>
-        <li><strong>2014 - BIP-44:</strong> Amplia BIP-32 per supportare nativamente account multipli e, soprattutto, <em>coin multipli</em> (Bitcoin, Ethereum, Litecoin) da un'unica frase mnemonica, standardizzando la logica dell'albero di derivazione.</li>
-        <li><strong>2015 - SHA-3 vs Keccak:</strong> Una distinzione storica fondamentale. Keccak vinse il concorso del NIST per definire lo standard SHA-3. Tuttavia, poco prima della finalizzazione, il NIST alterò i parametri di <em>padding</em> (passando da <code>0x01</code> a <code>0x06</code>). Ethereum, che era già in fase avanzata di sviluppo, decise di <strong>mantenere il Keccak originale</strong>. Ecco perché "Keccak-256" ed "SHA3-256" producono hash diversi oggi.</li>
-        <li><strong>2016 - EIP-55:</strong> Un hack elegante introdotto dopo la nascita di Ethereum per risolvere la frustrazione (e le perdite economiche) dovute a errori di battitura sugli indirizzi.</li>
+        <li><strong>1977 - RSA:</strong> Rivest, Shamir, and Adleman introduce asymmetric public-key cryptography, laying the conceptual foundations for systems like Bitcoin and Ethereum.</li>
+        <li><strong>2001 - SHA-2 / SHA-512:</strong> Standardized by NIST. Very robust, it is used in BIP-39 within the PBKDF2 process to stretch the mnemonic string into the seed.</li>
+        <li><strong>2012 - BIP-32:</strong> Introduced to solve the serious problem of early Bitcoin wallets requiring constant backups every time a new key was generated (JBOK - Just a Bunch Of Keys). Deterministic wallets are born.</li>
+        <li><strong>2013 - BIP-39:</strong> A leap forward for Usability. Replaces impossible-to-remember hexadecimal strings with simple lists of English words.</li>
+        <li><strong>2014 - BIP-44:</strong> Expands BIP-32 to natively support multiple accounts and, above all, <em>multiple coins</em> (Bitcoin, Ethereum, Litecoin) from a single mnemonic phrase, standardizing the derivation tree logic.</li>
+        <li><strong>2015 - SHA-3 vs Keccak:</strong> A fundamental historical distinction. Keccak won the NIST competition to define the SHA-3 standard. However, shortly before finalization, NIST altered the <em>padding</em> parameters (changing from <code>0x01</code> to <code>0x06</code>). Ethereum, which was already in advanced development, decided to <strong>keep the original Keccak</strong>. This is why "Keccak-256" and "SHA3-256" produce different hashes today.</li>
+        <li><strong>2016 - EIP-55:</strong> An elegant hack introduced after Ethereum's birth to solve frustration (and financial losses) due to typing errors on addresses.</li>
       </ul>
     </section>
 
     <section class="card">
-      <h2><span class="num">5</span>Perché usare algoritmi multipli e non uno solo?</h2>
+      <h2><span class="num">5</span>Why use multiple algorithms instead of just one?</h2>
       <p>
-        Invece di avere un super-algoritmo che fa tutto, la pipeline è segmentata perché ogni step risolve una minaccia o necessità specifica che un altro algoritmo non saprebbe gestire in modo efficiente:
+        Instead of having a super-algorithm that does everything, the pipeline is segmented because each step solves a specific threat or need that another algorithm couldn't handle efficiently:
       </p>
       <ul>
-        <li><strong>BIP-39 / BIP-32 / BIP-44:</strong> Risolvono il problema della <em>gestione e dell'usabilità umana</em>. Nessuna curva ellittica da sola può strutturare i backup sotto forma di parole facilmente memorizzabili.</li>
-        <li><strong>secp256k1:</strong> Risolve il problema dell'<em>autenticazione asimmetrica</em>. Una funzione di Hash non permette di creare Firme Digitali, mentre la curva ellittica è stata scelta appositamente per permettere validazioni rapide e firme molto compatte.</li>
-        <li><strong>Keccak-256:</strong> Risolve i problemi di <em>privacy e standardizzazione della lunghezza</em>. Derivare l'indirizzo dall'hash della chiave pubblica (invece di usare direttamente la chiave pubblica) aggiunge un layer di resistenza quantistica (finché non viene esposta per la prima volta).</li>
-        <li><strong>EIP-55:</strong> Risolve il problema degli <em>errori dell'interfaccia utente</em> (UI/UX). Gli algoritmi crittografici lavorano con bit invisibili; l'EIP-55 converte i metadati dell'hash in un formato visivo (maiuscolo/minuscolo) per difendere l'utente dalla sua stessa fallibilità.</li>
+        <li><strong>BIP-39 / BIP-32 / BIP-44:</strong> Solve the problem of <em>human management and usability</em>. No elliptic curve alone can structure backups in the form of easily memorable words.</li>
+        <li><strong>secp256k1:</strong> Solves the problem of <em>asymmetric authentication</em>. A Hash function doesn't allow Digital Signatures, while the elliptic curve was specifically chosen to allow fast validations and very compact signatures.</li>
+        <li><strong>Keccak-256:</strong> Solves problems of <em>privacy and length standardization</em>. Deriving the address from the hash of the public key (instead of directly using the public key) adds a layer of quantum resistance (until it is exposed for the first time).</li>
+        <li><strong>EIP-55:</strong> Solves the problem of <em>user interface errors</em> (UI/UX). Cryptographic algorithms work with invisible bits; EIP-55 converts the hash metadata into a visual format (uppercase/lowercase) to defend the user from their own fallibility.</li>
       </ul>
     </section>
   </div>
@@ -484,13 +483,13 @@ function afastermethodforcalculateklarger(k, G) {
     return R;
 }
 
-/* ---------- punti della curva ---------- */
+/* ---------- curve points ---------- */
 const curvePoints = [];
 for (let x = 0; x < modulo; x++)
     for (let y = 0; y < modulo; y++)
         if (((y * y - (x ** 3 + 7)) % modulo + modulo) % modulo === 0) curvePoints.push([x, y]);
 
-/* ---------- visualizzazione interattiva ---------- */
+/* ---------- interactive visualization ---------- */
 const anim = { steps: [], frames: [], i: 0, timer: null, k: 0 };
 const NS = 400, PAD = 36, STEPPX = (NS - 2 * PAD) / (modulo - 1);
 const PX = x => PAD + x * STEPPX;
@@ -800,7 +799,7 @@ function cambiaVelocita() { if (anim.timer) avviaAnim(); }
     });
 })();
 
-/* Statistiche */
+/* Statistics */
 function statMul(k, P) {
     let R = null, add = P;
     while (k > 0) {
